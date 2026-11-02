@@ -38,5 +38,9 @@
       "version": "27.0.0-alpha.0.0.0",
       "onFail": "download"
     }
+  },
+  "dependencies": {
+    "discord.js": "^14.28.0",
+    "dotenv": "^18.0.9"
   }
 }
