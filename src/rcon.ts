@@ -1,5 +1,7 @@
 import { Rcon } from "rcon-client";
 
+import { parsePlayersList, parseTps, type PlayerList, type TpsReport } from "./parsers.js";
+
 export default class RconClient {
 	constructor(
 		private readonly host: string,
@@ -16,5 +18,13 @@ export default class RconClient {
 		} finally {
 			rcon.end();
 		}
+	}
+
+	async listOnlinePlayers(): Promise<PlayerList> {
+		return parsePlayersList(await this.sendCommand("list"));
+	}
+
+	async getTps(): Promise<TpsReport> {
+		return parseTps(await this.sendCommand("tps"));
 	}
 }
