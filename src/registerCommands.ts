@@ -15,13 +15,11 @@ const body = commands.map((cmd) => cmd.data.toJSON());
 const rest = new REST().setToken(token);
 
 try {
-	const routes = guildId !== undefined ? Routes.applicationCommands : Routes.applicationGuildCommands;
-	await rest.put(routes(clientId, guildId), { body });
-
-	if (guildId !== "") {
-		console.log(`Registering the commands on the server: ${guildId}. On the client: ${clientId}`);
+	if (guildId) {
 		await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body });
+		console.log(`Registering the commands on the server: ${guildId}. On the client: ${clientId}`);
 	} else {
+		await rest.put(Routes.applicationCommands(clientId), { body });
 		console.log(`Registering commands globally on the client: ${clientId}`);
 	}
 } catch (err) {

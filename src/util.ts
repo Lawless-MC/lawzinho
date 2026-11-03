@@ -9,14 +9,14 @@ export function getEnvironmentVariable(key: string, required: boolean = false): 
 	return "";
 }
 
-async function findTsFiles(dirPath: string): Promise<string[]> {
+async function findModuleFiles(dirPath: string): Promise<string[]> {
 	const entries = await readdir(dirPath, { withFileTypes: true });
 	const nested = await Promise.all(
 		entries.map(async (entry) => {
 			const fullPath = join(dirPath, entry.name);
-			if (entry.isDirectory()) return findTsFiles(fullPath);
-			const isTsSource = entry.isFile() && entry.name.endsWith(".ts") && !entry.name.endsWith(".d.ts");
-			return isTsSource ? [fullPath] : [];
+			if (entry.isDirectory()) return findModuleFiles(fullPath);
+			const isModule = entry.isFile() && (entry.name.endsWith(".ts") || entry.name.endsWith(".js")) && !entry.name.endsWith(".d.ts");
+			return isModule ? [fullPath] : [];
 		}),
 	);
 	return nested.flat();
@@ -33,7 +33,7 @@ function hasDefaultExport<T>(mod: Record<string, unknown>): mod is { default: T 
 }
 
 export async function getAllDefaultExports<T = unknown>(dirPath: string, baseDir: string = ""): Promise<T[]> {
-	const files = await findTsFiles(resolve(baseDir, dirPath));
+	const files = await findModuleFiles(resolve(baseDir, dirPath));
 	const modules = await Promise.all(files.map((file) => importModule(file)));
 	return modules.filter(hasDefaultExport<T>).map((mod) => mod.default);
 }
