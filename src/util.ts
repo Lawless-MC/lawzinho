@@ -15,7 +15,10 @@ async function findModuleFiles(dirPath: string): Promise<string[]> {
 		entries.map(async (entry) => {
 			const fullPath = join(dirPath, entry.name);
 			if (entry.isDirectory()) return findModuleFiles(fullPath);
-			const isModule = entry.isFile() && (entry.name.endsWith(".ts") || entry.name.endsWith(".js")) && !entry.name.endsWith(".d.ts");
+			const isModule =
+				entry.isFile() &&
+				(entry.name.endsWith(".ts") || entry.name.endsWith(".js")) &&
+				!entry.name.endsWith(".d.ts");
 			return isModule ? [fullPath] : [];
 		}),
 	);
