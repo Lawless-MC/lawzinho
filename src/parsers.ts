@@ -10,27 +10,35 @@ export interface TpsReport {
 	fifteenMinutes: number;
 }
 
-const FORMAT_CODES = /§[0-9a-fk-or]/gi;
+const FORMAT_CODES = /§x(?:§[0-9a-f]){6}|§[0-9a-fk-or]/gi;
 const TPS_VALUE = String.raw`\*?\d+(?:[.,]\d+)?`;
 
-const LIST_PATTERN = /^There are (?<online>\d+) of a max of (?<max>\d+) players online:\s*(?<players>.*)$/;
+const LIST_PATTERN =
+	/^(?:There are (?<englishOnline>\d+) of a max of (?<englishMax>\d+) players online:?|Há (?<portugueseOnline>\d+)(?:\/(?<portugueseTotal>\d+))? de (?:no máximo|um máximo de) (?<portugueseMax>\d+) jogadores online\.?)/i;
 const TPS_PATTERN = new RegExp(
 	String.raw`^TPS from last 1m, 5m, 15m:\s*(?<oneMinute>${TPS_VALUE}),\s*(?<fiveMinutes>${TPS_VALUE}),\s*(?<fifteenMinutes>${TPS_VALUE})$`,
 );
 
 export function parsePlayersList(response: string): PlayerList {
-	const match = LIST_PATTERN.exec(response.trim());
+	const clean = stripFormatting(response);
+	const match = LIST_PATTERN.exec(clean);
 
 	if (!match?.groups) {
 		throw new Error(`Unexpected list response: ${response}`);
 	}
 
-	const { online, max, players } = match.groups;
+	const { englishOnline, englishMax, portugueseOnline, portugueseMax } = match.groups;
+
+	const players = clean
+		.slice(match[0].length)
+		.split(/[\n,]/)
+		.map((entry) => entry.split(":").pop()?.trim() ?? "")
+		.filter((name) => name.length > 0);
 
 	return {
-		online: Number(online),
-		max: Number(max),
-		players: players ? players.split(",").map((player) => player.trim()) : [],
+		online: Number(englishOnline ?? portugueseOnline),
+		max: Number(englishMax ?? portugueseMax),
+		players,
 	};
 }
 
