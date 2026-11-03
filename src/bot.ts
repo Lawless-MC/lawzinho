@@ -1,11 +1,16 @@
 import { Client, GatewayIntentBits } from "discord.js";
 
+import type RconClient from "./rcon.js";
+
 export default class Bot {
 	private readonly client = new Client({
 		intents: GatewayIntentBits.GuildMessages | GatewayIntentBits.MessageContent,
 	});
 
-	constructor(private readonly token: string) {}
+	constructor(
+		private readonly token: string,
+		private readonly rcon: RconClient,
+	) {}
 
 	async start() {
 		this.client.once("clientReady", (c) => {
