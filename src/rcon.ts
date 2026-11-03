@@ -21,7 +21,7 @@ export default class RconClient {
 	}
 
 	async listOnlinePlayers(): Promise<PlayerList> {
-		return parsePlayersList(await this.sendCommand("list"));
+		return parsePlayersList(await this.sendCommand("minecraft:list"));
 	}
 
 	async getTps(): Promise<TpsReport> {
