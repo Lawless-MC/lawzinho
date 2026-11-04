@@ -21,6 +21,7 @@
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.6.6",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
@@ -41,6 +42,7 @@
     }
   },
   "dependencies": {
+    "better-sqlite3": "^13.0.3",
     "discord.js": "^14.28.0",
     "dotenv": "^18.0.9",
     "rcon-client": "^4.2.5"
