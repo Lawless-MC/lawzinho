@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import Bot from "./bot.js";
+import { db } from "./db.js";
 import RconClient from "./rcon.js";
 import { getEnvironmentVariable } from "./util.js";
 
@@ -15,7 +16,9 @@ const bot = new Bot(token, rcon);
 await bot.start();
 
 function shutdown() {
+	db.close();
 	bot.shutdown();
+
 	process.exit(0);
 }
 
